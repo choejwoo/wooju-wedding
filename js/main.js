@@ -210,8 +210,11 @@
     trackContainer?.addEventListener("touchmove", (e) => {
       const dx = Math.abs(e.touches[0].clientX - touchStartX);
       const dy = Math.abs(e.touches[0].clientY - touchStartY);
-      if (dx > dy && dx > 8) isSwiping = true;
-    }, { passive: true });
+      if (dx > dy && dx > 8) {
+        isSwiping = true;
+        e.preventDefault(); // 수평 스와이프 시 세로 스크롤 차단
+      }
+    }, { passive: false });
 
     trackContainer?.addEventListener("touchend", (e) => {
       if (!isSwiping) return;
@@ -349,11 +352,11 @@
       const btn = e.target.closest(".btn-copy");
       if (!btn) return;
       const number = btn.dataset.number;
-      copyToClipboard(number, btn);
+      copyToClipboard(number, "계좌번호가 복사되었습니다");
     });
   }
 
-  function copyToClipboard(text, btn) {
+  function copyToClipboard(text, toastMsg) {
     const fallback = () => {
       const ta = document.createElement("textarea");
       ta.value = text;
@@ -364,10 +367,10 @@
       document.body.removeChild(ta);
     };
 
-    const done = () => showToast("계좌번호가 복사되었습니다");
+    const done = () => showToast(toastMsg);
 
     if (navigator.clipboard) {
-      navigator.clipboard.writeText(text).then(done).catch(fallback);
+      navigator.clipboard.writeText(text).then(done).catch(() => { fallback(); done(); });
     } else {
       fallback();
       done();
@@ -396,8 +399,7 @@
     const copyLinkBtn = $("#btn-copy-link");
     if (copyLinkBtn) {
       copyLinkBtn.addEventListener("click", () => {
-        copyToClipboard(location.href, copyLinkBtn);
-        showToast("링크가 복사되었습니다");
+        copyToClipboard(location.href, "링크가 복사되었습니다");
       });
     }
 
