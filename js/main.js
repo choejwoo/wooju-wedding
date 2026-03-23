@@ -3,13 +3,7 @@
 (function () {
   "use strict";
 
-  // URL 파라미터로 버전 선택 (?v=friends → 친구용, 기본값 seniors)
-  const variantKey =
-    new URLSearchParams(location.search).get("v") === "friends"
-      ? "friends"
-      : "seniors";
-  const weddingVariant = weddingVariants[variantKey];
-  const weddingData = Object.assign({}, weddingCommon, weddingVariant);
+  // weddingData는 data.js에서 직접 로드됨
 
   /* ─── 유틸 ─── */
   function $(sel, ctx) {
@@ -84,91 +78,169 @@
     setText("#greeting-location", `${weddingData.location.name} ${weddingData.location.hall}`);
   }
 
-  /* ─── 3. 갤러리 섹션 ─── */
-  let currentLightboxIndex = 0;
+  /* ─── 3. 갤러리 (캐러셀 + 썸네일) ─── */
+  let carouselIndex = 0;
+  let carouselTotal = 0;
 
   function renderGallery() {
     const section = $("#section-gallery");
-    if (!section || !weddingData.sections.gallery) {
-      if (section) section.style.display = "none";
-      return;
-    }
-
-    const grid = $("#gallery-grid");
-    if (!grid) return;
+    if (!section) return;
 
     const images = weddingData.gallery;
-    grid.innerHTML = images
-      .map(
-        (src, i) => `
-      <div class="gallery-item fade-up" style="--delay:${i * 0.05}s" data-index="${i}">
-        <img src="${src}" alt="웨딩 사진 ${i + 1}" loading="lazy"
-             onerror="this.closest('.gallery-item').classList.add('img-error')">
-      </div>
-    `
-      )
-      .join("");
+    carouselTotal = images.length;
+    if (!carouselTotal) return;
 
-    // 라이트박스 이벤트
-    grid.addEventListener("click", (e) => {
-      const item = e.target.closest(".gallery-item");
-      if (!item) return;
-      openLightbox(parseInt(item.dataset.index, 10));
+    // 데이터 정규화: 문자열 또는 {src, type} 모두 지원
+    const items = images.map((img) =>
+      typeof img === "string" ? { src: img, type: "png" } : img
+    );
+
+    // 캐러셀 슬라이드
+    const track = $("#carousel-track");
+    if (track) {
+      track.innerHTML = items
+        .map(
+          (item, i) => `
+        <div class="carousel-slide" role="listitem" aria-label="사진 ${i + 1}">
+          <img src="${item.src}" alt="웨딩 사진 ${i + 1}"
+               loading="${i === 0 ? "eager" : "lazy"}"
+               onerror="this.closest('.carousel-slide').classList.add('img-error')">
+        </div>
+      `
+        )
+        .join("");
+    }
+
+    // 도트 인디케이터
+    const dotsEl = $("#carousel-dots");
+    if (dotsEl) {
+      dotsEl.innerHTML = items
+        .map(
+          (_, i) => `
+        <button class="carousel-dot${i === 0 ? " active" : ""}"
+                role="tab" aria-label="사진 ${i + 1}" aria-selected="${i === 0}"
+                data-index="${i}"></button>
+      `
+        )
+        .join("");
+    }
+
+    // 썸네일 그리드
+    const thumbsEl = $("#gallery-thumbs");
+    if (thumbsEl) {
+      thumbsEl.innerHTML = items
+        .map(
+          (item, i) => `
+        <div class="gallery-thumb${i === 0 ? " active" : ""} fade-up"
+             style="--delay:${Math.min(i * 0.04, 0.4)}s"
+             role="listitem" data-index="${i}"
+             tabindex="0" aria-label="사진 ${i + 1}">
+          <img src="${item.src}" alt="웨딩 사진 ${i + 1}" loading="lazy"
+               onerror="this.closest('.gallery-thumb').classList.add('img-error')">
+        </div>
+      `
+        )
+        .join("");
+
+      // 동적으로 추가된 fade-up 요소를 스크롤 옵저버에 등록
+      if (typeof window.observeAnimations === "function") {
+        window.observeAnimations(thumbsEl.querySelectorAll(".fade-up"));
+      }
+    }
+
+    initCarousel();
+  }
+
+  function goToSlide(index) {
+    carouselIndex = ((index % carouselTotal) + carouselTotal) % carouselTotal;
+
+    const track = $("#carousel-track");
+    if (track) track.style.transform = `translateX(-${carouselIndex * 100}%)`;
+
+    $$(".carousel-dot").forEach((dot, i) => {
+      dot.classList.toggle("active", i === carouselIndex);
+      dot.setAttribute("aria-selected", String(i === carouselIndex));
+    });
+
+    $$(".gallery-thumb").forEach((thumb, i) => {
+      thumb.classList.toggle("active", i === carouselIndex);
     });
   }
 
-  function openLightbox(index) {
-    currentLightboxIndex = index;
-    const lb = $("#lightbox");
-    if (!lb) return;
-    const img = lb.querySelector(".lightbox-img");
-    if (img) img.src = weddingData.gallery[index];
-    lb.classList.add("active");
-    document.body.style.overflow = "hidden";
+  function initCarousel() {
+    const trackContainer = $(".carousel-track-container");
+    const dotsEl = $("#carousel-dots");
+    const thumbsEl = $("#gallery-thumbs");
 
-    const counter = lb.querySelector(".lightbox-counter");
-    if (counter)
-      counter.textContent = `${index + 1} / ${weddingData.gallery.length}`;
-  }
+    // 이전/다음 버튼
+    $("#carousel-prev")?.addEventListener("click", () => goToSlide(carouselIndex - 1));
+    $("#carousel-next")?.addEventListener("click", () => goToSlide(carouselIndex + 1));
 
-  function closeLightbox() {
-    const lb = $("#lightbox");
-    if (!lb) return;
-    lb.classList.remove("active");
-    document.body.style.overflow = "";
-  }
-
-  function moveLightbox(dir) {
-    const total = weddingData.gallery.length;
-    currentLightboxIndex = (currentLightboxIndex + dir + total) % total;
-    openLightbox(currentLightboxIndex);
-  }
-
-  function initLightbox() {
-    const lb = $("#lightbox");
-    if (!lb) return;
-
-    lb.querySelector(".lightbox-close")?.addEventListener("click", closeLightbox);
-    lb.querySelector(".lightbox-prev")?.addEventListener("click", () => moveLightbox(-1));
-    lb.querySelector(".lightbox-next")?.addEventListener("click", () => moveLightbox(1));
-    lb.addEventListener("click", (e) => {
-      if (e.target === lb) closeLightbox();
+    // 도트
+    dotsEl?.addEventListener("click", (e) => {
+      const dot = e.target.closest(".carousel-dot");
+      if (dot) goToSlide(parseInt(dot.dataset.index, 10));
     });
 
-    // 스와이프
-    let startX = 0;
-    lb.addEventListener("touchstart", (e) => (startX = e.touches[0].clientX), { passive: true });
-    lb.addEventListener("touchend", (e) => {
-      const diff = startX - e.changedTouches[0].clientX;
-      if (Math.abs(diff) > 50) moveLightbox(diff > 0 ? 1 : -1);
+    // 썸네일 클릭 → 캐러셀 이동
+    thumbsEl?.addEventListener("click", (e) => {
+      const thumb = e.target.closest(".gallery-thumb");
+      if (!thumb) return;
+      goToSlide(parseInt(thumb.dataset.index, 10));
+      $(".carousel-wrapper")?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    });
+
+    thumbsEl?.addEventListener("keydown", (e) => {
+      if (e.key !== "Enter" && e.key !== " ") return;
+      const thumb = e.target.closest(".gallery-thumb");
+      if (thumb) { e.preventDefault(); thumb.click(); }
+    });
+
+    // 터치 스와이프
+    let touchStartX = 0;
+    let touchStartY = 0;
+    let isSwiping = false;
+
+    trackContainer?.addEventListener("touchstart", (e) => {
+      touchStartX = e.touches[0].clientX;
+      touchStartY = e.touches[0].clientY;
+      isSwiping = false;
     }, { passive: true });
 
-    // 키보드
+    trackContainer?.addEventListener("touchmove", (e) => {
+      const dx = Math.abs(e.touches[0].clientX - touchStartX);
+      const dy = Math.abs(e.touches[0].clientY - touchStartY);
+      if (dx > dy && dx > 8) isSwiping = true;
+    }, { passive: true });
+
+    trackContainer?.addEventListener("touchend", (e) => {
+      if (!isSwiping) return;
+      const diff = touchStartX - e.changedTouches[0].clientX;
+      if (Math.abs(diff) > 40) goToSlide(carouselIndex + (diff > 0 ? 1 : -1));
+      isSwiping = false;
+    }, { passive: true });
+
+    // 마우스 드래그 (데스크톱)
+    let mouseStartX = 0;
+    let mouseDown = false;
+
+    trackContainer?.addEventListener("mousedown", (e) => {
+      mouseDown = true;
+      mouseStartX = e.clientX;
+    });
+    trackContainer?.addEventListener("mouseup", (e) => {
+      if (!mouseDown) return;
+      mouseDown = false;
+      const diff = mouseStartX - e.clientX;
+      if (Math.abs(diff) > 40) goToSlide(carouselIndex + (diff > 0 ? 1 : -1));
+    });
+    trackContainer?.addEventListener("mouseleave", () => { mouseDown = false; });
+
+    // 키보드 (좌우 화살표)
     document.addEventListener("keydown", (e) => {
-      if (!lb.classList.contains("active")) return;
-      if (e.key === "ArrowLeft") moveLightbox(-1);
-      if (e.key === "ArrowRight") moveLightbox(1);
-      if (e.key === "Escape") closeLightbox();
+      if (["INPUT", "TEXTAREA", "SELECT"].includes(document.activeElement?.tagName)) return;
+      if (e.key === "ArrowLeft") goToSlide(carouselIndex - 1);
+      if (e.key === "ArrowRight") goToSlide(carouselIndex + 1);
     });
   }
 
@@ -193,51 +265,51 @@
     const tmapBtn = $("#btn-tmap");
     if (kakaoBtn) kakaoBtn.href = loc.kakaoMapUrl;
     if (naverBtn) naverBtn.href = loc.naverMapUrl;
-    if (tmapBtn) tmapBtn.href = loc.tmapUrl;
 
-    // 카카오맵 임베드
-    renderKakaoMap(loc.mapCoord.lat, loc.mapCoord.lng, loc.name);
-  }
+    // 티맵: 앱 딥링크 시도 → 실패 시 앱스토어로 폴백
+    if (tmapBtn) {
+      tmapBtn.addEventListener("click", (e) => {
+        e.preventDefault();
+        const tmapDeepLink = loc.tmapUrl;
+        const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+        const storeUrl = isIOS
+          ? "https://apps.apple.com/kr/app/tmap/id431589174"
+          : "https://play.google.com/store/apps/details?id=com.skt.tmap.ku";
 
-  function renderKakaoMap(lat, lng, name) {
-    const container = $("#kakao-map");
-    if (!container) return;
-
-    // 카카오맵 SDK가 로드된 경우에만 초기화
-    if (typeof kakao === "undefined" || !kakao.maps) {
-      // SDK 없으면 정적 링크 이미지로 대체
-      container.innerHTML = `
-        <a href="https://map.kakao.com/link/map/${encodeURIComponent(name)},${lat},${lng}"
-           target="_blank" rel="noopener" class="map-fallback">
-          <span>📍 지도에서 보기</span>
-        </a>
-      `;
-      return;
+        window.location.href = tmapDeepLink;
+        setTimeout(() => {
+          // 앱이 열리지 않았으면 스토어로
+          if (!document.hidden) window.location.href = storeUrl;
+        }, 1500);
+      });
     }
 
-    const options = {
-      center: new kakao.maps.LatLng(lat, lng),
-      level: 3,
-    };
-    const map = new kakao.maps.Map(container, options);
-    const marker = new kakao.maps.Marker({
-      position: new kakao.maps.LatLng(lat, lng),
-    });
-    marker.setMap(map);
+    // Google Maps iframe 임베드
+    renderGoogleMap(loc.mapCoord.lat, loc.mapCoord.lng, loc.name);
+  }
 
-    const infowindow = new kakao.maps.InfoWindow({
-      content: `<div style="padding:5px 10px;font-size:13px;">${name}</div>`,
-    });
-    infowindow.open(map, marker);
+  function renderGoogleMap(lat, lng, name) {
+    const container = $("#google-map-container");
+    if (!container) return;
+
+    container.innerHTML = `
+      <iframe
+        title="${name} 지도"
+        width="100%"
+        height="100%"
+        style="border:0;display:block;"
+        loading="lazy"
+        allowfullscreen
+        referrerpolicy="no-referrer-when-downgrade"
+        src="https://maps.google.com/maps?q=${lat},${lng}&z=16&output=embed&hl=ko">
+      </iframe>
+    `;
   }
 
   /* ─── 5. 계좌 섹션 ─── */
   function renderAccounts() {
     const section = $("#section-account");
-    if (!section || !weddingData.sections.account) {
-      if (section) section.style.display = "none";
-      return;
-    }
+    if (!section) return;
 
     function buildAccountHTML(accounts, label) {
       return accounts
@@ -316,54 +388,7 @@
     setTimeout(() => toast.classList.remove("show"), 2500);
   }
 
-  /* ─── 6. 버스 & RSVP 섹션 ─── */
-  function renderBus() {
-    const section = $("#section-bus");
-    if (!section) return;
-
-    if (!weddingData.sections.bus) {
-      section.style.display = "none";
-      return;
-    }
-
-    const bus = weddingData.bus;
-    setText("#bus-info", bus.info);
-
-    const routesEl = $("#bus-routes");
-    if (routesEl && bus.routes) {
-      routesEl.innerHTML = bus.routes
-        .map(
-          (r) => `
-        <div class="bus-route">
-          <span class="bus-icon">🚌</span>
-          <div class="bus-detail">
-            <strong>${r.departure}</strong>
-            <span>출발 ${r.time} · 귀환 ${r.returnTime}</span>
-          </div>
-        </div>
-      `
-        )
-        .join("");
-    }
-
-    setText("#bus-note", bus.note);
-    const busFormBtn = $("#btn-bus-form");
-    if (busFormBtn) busFormBtn.href = bus.formUrl;
-  }
-
-  function renderRsvp() {
-    const section = $("#section-rsvp");
-    if (!section || !weddingData.sections.rsvp) {
-      if (section) section.style.display = "none";
-      return;
-    }
-
-    setText("#rsvp-deadline", weddingData.rsvp.deadline);
-    const rsvpBtn = $("#btn-rsvp");
-    if (rsvpBtn) rsvpBtn.href = weddingData.rsvp.formUrl;
-  }
-
-  /* ─── 7. 푸터 & 공유 ─── */
+  /* ─── 6. 푸터 & 공유 ─── */
   function renderFooter() {
     setText("#footer-names", `${weddingData.groom.name} ♥ ${weddingData.bride.name}`);
 
@@ -422,9 +447,6 @@
     renderGallery();
     renderLocation();
     renderAccounts();
-    renderBus();
-    renderRsvp();
     renderFooter();
-    initLightbox();
   });
 })();

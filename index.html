@@ -2,14 +2,14 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>이우주 ♥ 박은빛 결혼합니다</title>
-  <meta name="description" content="2026년 5월 30일 토요일 오전 11시, 더채플앳청담에서 결혼합니다." />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>최재우 ♥ 이주연 결혼합니다</title>
+  <meta name="description" content="2026년 6월 6일 토요일 오후 6시 30분, 역삼 아모리스에서 결혼합니다." />
 
   <!-- Open Graph -->
   <meta property="og:type" content="website" />
-  <meta property="og:title" content="이우주 ♥ 박은빛 결혼합니다" />
-  <meta property="og:description" content="2026년 5월 30일 토요일 오전 11시 · 더채플앳청담" />
+  <meta property="og:title" content="최재우 ♥ 이주연 결혼합니다" />
+  <meta property="og:description" content="2026년 6월 6일 토요일 오후 6시 30분 · 역삼 아모리스" />
   <meta property="og:image" content="images/og-image.jpg" />
   <meta property="og:url" content="https://your-domain.com/" />
 
@@ -63,17 +63,30 @@
   <!-- ─── 3. 갤러리 ─── -->
   <section id="section-gallery" aria-label="사진 갤러리">
     <p class="section-title fade-in">Gallery</p>
-    <div class="gallery-grid" id="gallery-grid" role="list" aria-label="웨딩 사진 갤러리"></div>
-  </section>
 
-  <!-- 라이트박스 -->
-  <div id="lightbox" class="lightbox" role="dialog" aria-modal="true" aria-label="사진 크게 보기">
-    <button class="lightbox-close" aria-label="닫기">✕</button>
-    <button class="lightbox-nav lightbox-prev" aria-label="이전 사진">‹</button>
-    <img class="lightbox-img" src="" alt="웨딩 사진" />
-    <button class="lightbox-nav lightbox-next" aria-label="다음 사진">›</button>
-    <span class="lightbox-counter" aria-live="polite"></span>
-  </div>
+    <!-- 캐러셀 -->
+    <div class="carousel-wrapper" aria-label="웨딩 사진 캐러셀">
+      <div class="carousel-slide-area">
+        <div class="carousel-track-container">
+          <div class="carousel-track" id="carousel-track" role="list"></div>
+        </div>
+        <button class="carousel-btn carousel-prev" id="carousel-prev" aria-label="이전 사진">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="15 18 9 12 15 6"></polyline>
+          </svg>
+        </button>
+        <button class="carousel-btn carousel-next" id="carousel-next" aria-label="다음 사진">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 6 15 12 9 18"></polyline>
+          </svg>
+        </button>
+      </div>
+      <div class="carousel-dots" id="carousel-dots" role="tablist" aria-label="슬라이드 선택"></div>
+    </div>
+
+    <!-- 썸네일 액자 그리드 -->
+    <div class="gallery-thumbs" id="gallery-thumbs" role="list" aria-label="웨딩 사진 목록"></div>
+  </section>
 
   <!-- ─── 4. 장소 ─── -->
   <section id="section-location" aria-label="예식 장소">
@@ -84,7 +97,7 @@
     <p class="location-address fade-up" style="--delay:0.1s" id="location-address"></p>
 
     <div class="map-container fade-up" style="--delay:0.15s">
-      <div id="kakao-map" style="width:100%;height:100%;" aria-label="예식장 지도"></div>
+      <div id="google-map-container" style="width:100%;height:100%;" aria-label="예식장 지도"></div>
     </div>
 
     <div class="map-buttons fade-up" style="--delay:0.2s">
@@ -125,34 +138,7 @@
     <div id="account-bride" class="account-panel" role="tabpanel"></div>
   </section>
 
-  <!-- ─── 6. 버스 대절 ─── -->
-  <section id="section-bus" aria-label="버스 대절 안내">
-    <p class="section-title fade-in">버스 안내</p>
-    <p class="bus-info-text fade-up" id="bus-info"></p>
-    <div class="bus-routes fade-up" style="--delay:0.1s" id="bus-routes"></div>
-    <p class="bus-note fade-up" style="--delay:0.15s" id="bus-note"></p>
-    <div class="fade-up" style="--delay:0.2s;text-align:center;">
-      <a id="btn-bus-form" href="#" target="_blank" rel="noopener" class="btn-primary">
-        🚌 버스 탑승 신청하기
-      </a>
-    </div>
-  </section>
-
-  <!-- ─── 6-2. 참석 여부 ─── -->
-  <section id="section-rsvp" aria-label="참석 여부">
-    <p class="section-title fade-in" id="rsvp-section-title">참석 여부</p>
-    <p class="rsvp-desc fade-up" id="rsvp-desc">축하해 주실 수 있나요?</p>
-    <p class="rsvp-deadline fade-up" style="--delay:0.1s">
-      <span id="rsvp-deadline"></span>까지 알려주시면 감사합니다.
-    </p>
-    <div class="fade-up" style="--delay:0.15s;text-align:center;">
-      <a id="btn-rsvp" href="#" target="_blank" rel="noopener" class="btn-outline">
-        ✉ 참석 여부 알려주기
-      </a>
-    </div>
-  </section>
-
-  <!-- ─── 7. 푸터 ─── -->
+  <!-- ─── 6. 푸터 ─── -->
   <footer aria-label="공유">
     <p class="footer-names" id="footer-names"></p>
 
@@ -169,22 +155,21 @@
       </button>
     </div>
 
-    <p class="footer-copy">© 2026 이우주 · 박은빛</p>
+    <p class="footer-copy">© 2026 최재우 · 이주연</p>
   </footer>
 
 </div><!-- /.page-wrapper -->
 
 <!-- 스크립트 -->
-<script src="js/data-common.js"></script>
-<script src="js/data-variants.js"></script>
+<script src="js/data.js"></script>
 <script src="js/animations.js"></script>
 <script src="js/main.js"></script>
 
-<!-- 카카오 SDK (선택 사항 — 실제 키 발급 후 활성화) -->
-<!-- <script src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.2/kakao.min.js"
+<!-- 카카오 SDK -->
+<script src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.2/kakao.min.js"
         integrity="sha384-TiCUE00h649CAMonG018J2ujOgDKW/kVWlChEuu4jK2vxfAAD0eZxzCKakxg55G4"
         crossorigin="anonymous"></script>
-<script>Kakao.init('YOUR_KAKAO_JAVASCRIPT_KEY');</script> -->
+<script>Kakao.init('73535e288dd4f87655f8b52f5670810c');</script>
 
 </body>
 </html>

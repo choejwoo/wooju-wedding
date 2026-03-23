@@ -4,11 +4,7 @@
 
 모바일 최적화된 청첩장 웹페이지를 개발합니다. 모바일 퍼스트로 설계하되, 데스크톱에서도 깔끔하게 보이는 반응형 디자인을 적용합니다.
 
-**두 가지 버전**을 제공합니다:
-- `/seniors` — 어른용 (부모님 지인, 친척 등). 격식 있는 톤, 초대 문구 중심
-- `/friends` — 친구용. 캐주얼한 톤, 갤러리/공유 중심
-
-같은 HTML 템플릿(`index.html`)을 공유하고, 각 버전별 데이터 파일(`data-seniors.js`, `data-friends.js`)만 달리하여 콘텐츠를 분기합니다. 루트(`/`)에 접속하면 두 버전 중 하나로 리다이렉트하거나 선택 페이지를 보여줍니다.
+루트(`/`)에 단일 원페이지로 구성합니다.
 
 ## 기술 스택
 
@@ -41,15 +37,22 @@
 - 예식 일시 & 장소 요약
 
 ### 3. 사진 갤러리
-- 그리드 또는 캐러셀 형태의 사진 갤러리
-- 사진 터치/클릭 시 라이트박스(확대) 기능
-- 최소 6~12장 사진 표시
+- **캐러셀 (메인)**: 사진을 좌우 스와이프로 탐색. 터치/드래그 + 좌우 화살표 버튼. 하단에 도트 인디케이터
+- **썸네일 액자 그리드**: 캐러셀 아래에 작은 액자 형태로 전체 사진 배치 (5칼럼 그리드, 15장 → 5x3 깨끗하게)
+- 액자 클릭 시 캐러셀이 해당 사진으로 이동 (스크롤 + 슬라이드)
+- 현재 캐러셀에 보이는 사진에 해당하는 액자는 테두리 하이라이트
+- 사진은 GIF와 PNG 혼합 구성 (data.js에서 확장자로 구분)
 
 ### 4. 예식 장소 & 지도
 - 예식장 이름 & 주소
-- 카카오맵 또는 네이버 지도 임베드
-- 지도 앱 바로가기 버튼 (카카오맵, 네이버지도, 티맵)
-- 주차 안내 등 간단한 교통 정보
+- **Google Maps iframe 임베드** (API 키 불필요, `<iframe src="https://maps.google.com/maps?q=...">` 방식)
+- 지도 앱 바로가기 버튼 3종:
+  - "카카오맵으로 보기" → `kakaomap://` 딪링크 (웹: `https://map.kakao.com/link/map/장소명,lat,lng`)
+  - "네이버 지도로 보기" → `nmap://` 딪링크 (웹: `https://map.naver.com/...`)
+  - "티맵으로 보기" → `tmap://` 딪링크
+- 주차 안내, 지하철 안내 등 교통 정보
+  - 2호선 역삼역 7번 출구 → GS타워 1층 직접 연결
+  - GS타워 주차장 약 1,000대, 하객 4시간 무료
 
 ### 5. 마음 전하실 곳 (축의금 송금)
 - 신랑측 / 신부측 탭 또는 아코디언
@@ -57,95 +60,66 @@
 - 은행명, 예금주, 계좌번호 표시
 - 카카오페이 송금 링크 (선택)
 
-### 6. 버스 대절 & 참석 여부
-- Google Form 또는 외부 폼 링크 임베드/연결
-- "참석 여부 알려주기" CTA 버튼
-- 버스 대절 안내 텍스트 + 신청 링크 버튼
-- 출발 장소, 시간 등 간단한 안내 정보
-
-### 7. 푸터
-- 카카오톡 공유하기 버튼
-- 링크 복사 버튼
+### 6. 푸터
+- 카카오톡 공유하기 버튼 (Kakao JavaScript SDK 필요 — `developers.kakao.com`에서 앱 등록 후 JS 키 발급)
+- 링크 복사 버튼 (API 키 불필요, `navigator.clipboard` 사용)
 - 저작권 텍스트 (간단하게)
 
 ## 데이터 관리
 
-공통 데이터는 `js/data-common.js`, 버전별 차이는 `js/data-seniors.js`와 `js/data-friends.js`에서 관리합니다.
-각 폴더의 `index.html`이 해당 데이터 파일을 로드하여 같은 템플릿에 다른 콘텐츠를 렌더링합니다.
+모든 콘텐츠는 `js/data.js` 파일 하나에서 관리합니다. 내용만 수정하면 페이지에 자동 반영됩니다.
 
 ```javascript
-// js/data-common.js — 두 버전이 공유하는 데이터
-const weddingCommon = {
-  groom: { name: "", father: "", mother: "" },
-  bride: { name: "", father: "", mother: "" },
-  date: "2026-00-00T00:00:00",
+// js/data.js
+const weddingData = {
+  groom: { name: "최재우", father: "최명심", mother: "한승희" },
+  bride: { name: "이주연", father: "이재윤", mother: "진선숙" },
+  date: "2026-06-06T18:30:00",
+  greeting: "",
   location: {
-    name: "",
-    address: "",
+    name: "역삼 아모리스",
+    address: "서울특별시 강남구 논현로 508 GS타워",
     hall: "",
-    mapCoord: { lat: 0, lng: 0 },
+    mapCoord: { lat: 37.5014, lng: 127.0373 },
   },
+  // 캐러셀 + 썸네일 액자 갤러리
+  // type: "gif" | "png" — 사진별 포맷 구분
+  gallery: [
+    { src: "https://picsum.photos/seed/w1/800/600", type: "png" },
+    { src: "https://picsum.photos/seed/w2/800/600", type: "png" },
+    { src: "https://picsum.photos/seed/w3/800/600", type: "png" },
+    { src: "https://picsum.photos/seed/w4/800/600", type: "png" },
+    { src: "https://picsum.photos/seed/w5/800/600", type: "png" },
+    { src: "https://picsum.photos/seed/w6/800/600", type: "png" },
+    { src: "https://picsum.photos/seed/w7/800/600", type: "png" },
+    { src: "https://picsum.photos/seed/w8/800/600", type: "png" },
+    { src: "https://picsum.photos/seed/w9/800/600", type: "png" },
+    { src: "https://picsum.photos/seed/w10/800/600", type: "png" },
+    { src: "https://picsum.photos/seed/w11/800/600", type: "png" },
+    { src: "https://picsum.photos/seed/w12/800/600", type: "png" },
+    { src: "https://picsum.photos/seed/w13/800/600", type: "png" },
+    { src: "https://picsum.photos/seed/w14/800/600", type: "png" },
+    { src: "https://picsum.photos/seed/w15/800/600", type: "png" },
+  ],
   accounts: {
     groom: [{ bank: "", holder: "", number: "" }],
     bride: [{ bank: "", holder: "", number: "" }],
   },
   share: {
-    kakaoKey: "",
+    kakaoKey: "73535e288dd4f87655f8b52f5670810c",
   },
 };
-```
-
-```javascript
-// js/data-seniors.js — 어른용 오버라이드
-const weddingVariant = {
-  greeting: "두 사람이 사랑과 믿음으로...",  // 격식 있는 인사말
-  gallery: ["images/gallery/formal-01.jpg", ...],  // 포멀한 사진 위주
-  sections: {
-    gallery: true,
-    account: true,
-    bus: true,    // 어른용은 버스 대절 표시
-    rsvp: true,
-  },
-  bus: { info: "", formUrl: "" },
-  rsvp: { formUrl: "" },
-};
-```
-
-```javascript
-// js/data-friends.js — 친구용 오버라이드
-const weddingVariant = {
-  greeting: "우리 결혼합니다! 🎉",  // 캐주얼한 인사말
-  gallery: ["images/gallery/casual-01.jpg", ...],  // 자연스러운 사진 위주
-  sections: {
-    gallery: true,
-    account: true,
-    bus: false,   // 친구용은 버스 대절 숨김 (필요시 true)
-    rsvp: true,
-  },
-  rsvp: { formUrl: "" },
-};
-```
-
-`main.js`에서 `weddingCommon`과 `weddingVariant`를 머지하여 최종 데이터를 생성합니다:
-```javascript
-const weddingData = { ...weddingCommon, ...weddingVariant };
 ```
 
 ## 프로젝트 구조
 
 ```
 /
-├── index.html              # 루트 (버전 선택 or 리다이렉트)
-├── seniors/
-│   └── index.html          # 어른용 페이지 (data-seniors.js 로드)
-├── friends/
-│   └── index.html          # 친구용 페이지 (data-friends.js 로드)
+├── index.html              # 메인 페이지 (원페이지)
 ├── css/
-│   └── style.css           # 전체 스타일 (공유)
+│   └── style.css           # 전체 스타일
 ├── js/
-│   ├── data-common.js      # 공통 데이터 (이름, 날짜, 장소, 계좌)
-│   ├── data-seniors.js     # 어른용 데이터 (인사말, 갤러리, 섹션 on/off)
-│   ├── data-friends.js     # 친구용 데이터 (인사말, 갤러리, 섹션 on/off)
+│   ├── data.js             # 콘텐츠 데이터 (이것만 수정)
 │   ├── main.js             # 메인 로직 (렌더링, 이벤트)
 │   └── animations.js       # 스크롤 애니메이션 (Intersection Observer)
 ├── images/
@@ -157,23 +131,6 @@ const weddingData = { ...weddingCommon, ...weddingVariant };
 ├── CNAME                   # GitHub Pages 커스텀 도메인
 └── README.md
 ```
-
-### 템플릿 공유 방식
-- `seniors/index.html`과 `friends/index.html`은 같은 HTML 구조
-- 차이점은 `<script>` 태그에서 로드하는 데이터 파일만 다름:
-  ```html
-  <!-- seniors/index.html -->
-  <script src="../js/data-common.js"></script>
-  <script src="../js/data-seniors.js"></script>
-  <script src="../js/main.js"></script>
-  ```
-  ```html
-  <!-- friends/index.html -->
-  <script src="../js/data-common.js"></script>
-  <script src="../js/data-friends.js"></script>
-  <script src="../js/main.js"></script>
-  ```
-- `main.js`는 `weddingData.sections` 값을 보고 섹션을 표시/숨김 처리
 
 ## 구현 요구사항
 

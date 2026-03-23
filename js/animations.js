@@ -3,17 +3,17 @@
 (function () {
   "use strict";
 
+  let scrollObserver = null;
+
   function initScrollAnimations() {
     const targets = document.querySelectorAll(".fade-up, .fade-in");
 
-    if (!targets.length) return;
-
-    const observer = new IntersectionObserver(
+    scrollObserver = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
             entry.target.classList.add("visible");
-            observer.unobserve(entry.target);
+            scrollObserver.unobserve(entry.target);
           }
         });
       },
@@ -23,8 +23,14 @@
       }
     );
 
-    targets.forEach((el) => observer.observe(el));
+    targets.forEach((el) => scrollObserver.observe(el));
   }
+
+  // Expose for dynamically added elements (e.g. gallery thumbnails)
+  window.observeAnimations = function (elements) {
+    if (!scrollObserver) return;
+    elements.forEach((el) => scrollObserver.observe(el));
+  };
 
   function initCoverAnimation() {
     const cover = document.querySelector(".cover-content");
@@ -84,8 +90,8 @@
     initScrollArrow();
     initScrollAnimations();
 
-    if (typeof weddingCommon !== "undefined") {
-      initCountdown(weddingCommon.date);
+    if (typeof weddingData !== "undefined") {
+      initCountdown(weddingData.date);
     }
   });
 })();
