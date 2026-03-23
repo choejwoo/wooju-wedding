@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>이우주 ♥ 박은빛 결혼합니다</title>
+  <meta name="description" content="2026년 5월 30일 토요일 오전 11시, 더채플앳청담에서 결혼합니다." />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="이우주 ♥ 박은빛 결혼합니다" />
+  <meta property="og:description" content="2026년 5월 30일 토요일 오전 11시 · 더채플앳청담" />
+  <meta property="og:image" content="images/og-image.jpg" />
+  <meta property="og:url" content="https://your-domain.com/" />
+
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💍</text></svg>" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+<div class="page-wrapper">
+
+  <!-- ─── 1. 커버 ─── -->
+  <section id="section-cover" aria-label="커버">
+    <div class="cover-bg" role="img" aria-label="웨딩 커버 사진"></div>
+    <div class="cover-overlay" aria-hidden="true"></div>
+
+    <div class="cover-content" id="cover-content">
+      <div class="cover-names">
+        <span id="cover-groom-name"></span>
+        <span class="separator">♥</span>
+        <span id="cover-bride-name"></span>
+      </div>
+      <p class="cover-date" id="cover-date"></p>
+      <p class="cover-location-text" id="cover-location"></p>
+      <p class="cover-countdown" id="countdown" aria-label="결혼식까지 남은 날"></p>
+    </div>
+
+    <div class="scroll-arrow" aria-hidden="true">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <polyline points="6 9 12 15 18 9"></polyline>
+      </svg>
+    </div>
+  </section>
+
+  <!-- ─── 2. 초대 문구 ─── -->
+  <section id="section-greeting" aria-label="초대 문구">
+    <p class="section-title fade-in">Invitation</p>
+
+    <h2 class="greeting-title fade-up" id="greeting-title"></h2>
+    <div class="divider" aria-hidden="true"></div>
+
+    <div id="greeting-text" class="fade-up" style="--delay:0.1s"></div>
+
+    <div id="parents-info" class="parents-info fade-up" style="--delay:0.2s" aria-label="양가 부모님"></div>
+
+    <div class="greeting-event-info fade-up" style="--delay:0.3s" aria-label="예식 정보">
+      <strong id="greeting-date"></strong><br>
+      <span id="greeting-location"></span>
+    </div>
+  </section>
+
+  <!-- ─── 3. 갤러리 ─── -->
+  <section id="section-gallery" aria-label="사진 갤러리">
+    <p class="section-title fade-in">Gallery</p>
+    <div class="gallery-grid" id="gallery-grid" role="list" aria-label="웨딩 사진 갤러리"></div>
+  </section>
+
+  <!-- 라이트박스 -->
+  <div id="lightbox" class="lightbox" role="dialog" aria-modal="true" aria-label="사진 크게 보기">
+    <button class="lightbox-close" aria-label="닫기">✕</button>
+    <button class="lightbox-nav lightbox-prev" aria-label="이전 사진">‹</button>
+    <img class="lightbox-img" src="" alt="웨딩 사진" />
+    <button class="lightbox-nav lightbox-next" aria-label="다음 사진">›</button>
+    <span class="lightbox-counter" aria-live="polite"></span>
+  </div>
+
+  <!-- ─── 4. 장소 ─── -->
+  <section id="section-location" aria-label="예식 장소">
+    <p class="section-title fade-in">Location</p>
+
+    <h2 class="location-name fade-up" id="location-name"></h2>
+    <p class="location-hall fade-up" style="--delay:0.05s" id="location-hall"></p>
+    <p class="location-address fade-up" style="--delay:0.1s" id="location-address"></p>
+
+    <div class="map-container fade-up" style="--delay:0.15s">
+      <div id="kakao-map" style="width:100%;height:100%;" aria-label="예식장 지도"></div>
+    </div>
+
+    <div class="map-buttons fade-up" style="--delay:0.2s">
+      <a id="btn-kakaomap" href="#" target="_blank" rel="noopener" class="btn-map" aria-label="카카오맵으로 보기">
+        🗺 카카오맵
+      </a>
+      <a id="btn-navermap" href="#" target="_blank" rel="noopener" class="btn-map" aria-label="네이버지도로 보기">
+        🗺 네이버지도
+      </a>
+      <a id="btn-tmap" href="#" target="_blank" rel="noopener" class="btn-map" aria-label="티맵으로 보기">
+        🗺 티맵
+      </a>
+    </div>
+
+    <div class="transport-info fade-up" style="--delay:0.25s" aria-label="교통 안내">
+      <h4>교통 안내</h4>
+      <ul id="location-transport"></ul>
+      <p class="parking-info">🅿 <span id="location-parking"></span></p>
+    </div>
+  </section>
+
+  <!-- ─── 5. 계좌 ─── -->
+  <section id="section-account" aria-label="마음 전하실 곳">
+    <p class="section-title fade-in">마음 전하실 곳</p>
+
+    <div class="account-tabs" role="tablist" aria-label="신랑/신부 계좌">
+      <button class="account-tab active" role="tab" aria-selected="true"
+              aria-controls="account-groom" data-target="account-groom">
+        신랑측
+      </button>
+      <button class="account-tab" role="tab" aria-selected="false"
+              aria-controls="account-bride" data-target="account-bride">
+        신부측
+      </button>
+    </div>
+
+    <div id="account-groom" class="account-panel active" role="tabpanel"></div>
+    <div id="account-bride" class="account-panel" role="tabpanel"></div>
+  </section>
+
+  <!-- ─── 6. 버스 대절 ─── -->
+  <section id="section-bus" aria-label="버스 대절 안내">
+    <p class="section-title fade-in">버스 안내</p>
+    <p class="bus-info-text fade-up" id="bus-info"></p>
+    <div class="bus-routes fade-up" style="--delay:0.1s" id="bus-routes"></div>
+    <p class="bus-note fade-up" style="--delay:0.15s" id="bus-note"></p>
+    <div class="fade-up" style="--delay:0.2s;text-align:center;">
+      <a id="btn-bus-form" href="#" target="_blank" rel="noopener" class="btn-primary">
+        🚌 버스 탑승 신청하기
+      </a>
+    </div>
+  </section>
+
+  <!-- ─── 6-2. 참석 여부 ─── -->
+  <section id="section-rsvp" aria-label="참석 여부">
+    <p class="section-title fade-in" id="rsvp-section-title">참석 여부</p>
+    <p class="rsvp-desc fade-up" id="rsvp-desc">축하해 주실 수 있나요?</p>
+    <p class="rsvp-deadline fade-up" style="--delay:0.1s">
+      <span id="rsvp-deadline"></span>까지 알려주시면 감사합니다.
+    </p>
+    <div class="fade-up" style="--delay:0.15s;text-align:center;">
+      <a id="btn-rsvp" href="#" target="_blank" rel="noopener" class="btn-outline">
+        ✉ 참석 여부 알려주기
+      </a>
+    </div>
+  </section>
+
+  <!-- ─── 7. 푸터 ─── -->
+  <footer aria-label="공유">
+    <p class="footer-names" id="footer-names"></p>
+
+    <div class="share-buttons">
+      <button id="btn-kakao-share" class="btn-share btn-share-kakao" aria-label="카카오톡으로 공유">
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="currentColor" aria-hidden="true">
+          <path d="M9 1.5C4.86 1.5 1.5 4.14 1.5 7.38c0 2.1 1.38 3.93 3.45 4.98L4.2 15l3.33-2.22c.48.06.96.09 1.47.09 4.14 0 7.5-2.64 7.5-5.88S13.14 1.5 9 1.5z"/>
+        </svg>
+        카카오톡 공유
+      </button>
+
+      <button id="btn-copy-link" class="btn-share btn-share-link" aria-label="링크 복사">
+        🔗 링크 복사
+      </button>
+    </div>
+
+    <p class="footer-copy">© 2026 이우주 · 박은빛</p>
+  </footer>
+
+</div><!-- /.page-wrapper -->
+
+<!-- 스크립트 -->
+<script src="js/data-common.js"></script>
+<script src="js/data-variants.js"></script>
+<script src="js/animations.js"></script>
+<script src="js/main.js"></script>
+
+<!-- 카카오 SDK (선택 사항 — 실제 키 발급 후 활성화) -->
+<!-- <script src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.2/kakao.min.js"
+        integrity="sha384-TiCUE00h649CAMonG018J2ujOgDKW/kVWlChEuu4jK2vxfAAD0eZxzCKakxg55G4"
+        crossorigin="anonymous"></script>
+<script>Kakao.init('YOUR_KAKAO_JAVASCRIPT_KEY');</script> -->
+
+</body>
+</html>
