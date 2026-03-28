@@ -288,7 +288,8 @@
   }
 
   function goToSlide(index) {
-    carouselIndex = ((index % carouselTotal) + carouselTotal) % carouselTotal;
+    if (index < 0 || index >= carouselTotal) return;
+    carouselIndex = index;
 
     const track = $("#carousel-track");
     if (track) track.style.transform = `translateX(-${carouselIndex * 100}%)`;
@@ -301,6 +302,12 @@
     $$(".gallery-thumb").forEach((thumb, i) => {
       thumb.classList.toggle("active", i === carouselIndex);
     });
+
+    // 처음/마지막 버튼 비활성화
+    const prevBtn = $("#carousel-prev");
+    const nextBtn = $("#carousel-next");
+    if (prevBtn) prevBtn.disabled = carouselIndex === 0;
+    if (nextBtn) nextBtn.disabled = carouselIndex === carouselTotal - 1;
   }
 
   function initCarousel() {
@@ -578,6 +585,24 @@
     });
   }
 
+  /* ─── BGM ─── */
+  function initBGM() {
+    const btn = $("#bgm-toggle");
+    const audio = $("#bgm-audio");
+    if (!btn || !audio) return;
+
+    btn.addEventListener("click", () => {
+      if (audio.paused) {
+        audio.play().then(() => {
+          btn.classList.add("playing");
+        }).catch(() => {});
+      } else {
+        audio.pause();
+        btn.classList.remove("playing");
+      }
+    });
+  }
+
   /* ─── 초기화 ─── */
   document.addEventListener("DOMContentLoaded", () => {
     renderCover();
@@ -588,5 +613,6 @@
     renderFooter();
     renderContactModal();
     initContactModal();
+    initBGM();
   });
 })();
