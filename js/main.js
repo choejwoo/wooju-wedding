@@ -30,9 +30,11 @@
     const day = d.getDate();
     const dow = days[d.getDay()];
     const hour = d.getHours();
+    const minute = d.getMinutes();
     const ampm = hour < 12 ? "오전" : "오후";
     const h = hour <= 12 ? hour : hour - 12;
-    return `${year}년 ${month}월 ${day}일 ${dow}요일 ${ampm} ${h}시`;
+    const minStr = minute > 0 ? ` ${minute}분` : "";
+    return `${year}년 ${month}월 ${day}일 ${dow}요일 ${ampm} ${h}시${minStr}`;
   }
 
   /* ─── 1. 커버 섹션 ─── */
@@ -41,6 +43,140 @@
     setText("#cover-bride-name", weddingData.bride.name);
     setText("#cover-date", formatDate(weddingData.date));
     setText("#cover-location", weddingData.location.name);
+
+    initCoverSlideshow();
+  }
+
+  /* ─── 커버 배경 슬라이드쇼 ─── */
+  function initCoverSlideshow() {
+    const bg = $(".cover-bg");
+    if (!bg) return;
+
+    const photos = weddingData.coverPhotos;
+
+    // 사진이 없으면 단일 커버 이미지 폴백
+    const sources = (photos && photos.length > 0)
+      ? photos
+      : [{ src: "images/cover.jpg", type: "png" }];
+
+    // 슬라이드 생성
+    const slides = sources.map((photo, i) => {
+      const slide = document.createElement("div");
+      slide.className = "cover-slide" + (i === 0 ? " active" : "");
+      const img = document.createElement("img");
+      img.src = photo.src;
+      img.alt = "";
+      img.setAttribute("aria-hidden", "true");
+      img.loading = i === 0 ? "eager" : "lazy";
+      slide.appendChild(img);
+      bg.appendChild(slide);
+      return slide;
+    });
+
+    if (slides.length <= 1) return;
+
+    let current = 0;
+    setInterval(() => {
+      slides[current].classList.remove("active");
+      current = (current + 1) % slides.length;
+      const next = slides[current];
+      next.classList.add("active");
+      // ken burns 재실행: animation 리셋
+      next.style.animation = "none";
+      next.offsetHeight; // reflow
+      next.style.animation = "";
+    }, 5000);
+  }
+
+  /* ─── 연락하기 모달 ─── */
+  function renderContactModal() {
+    const list = $("#contact-list");
+    if (!list) return;
+
+    const { groom, bride } = weddingData;
+
+    // 각 측의 연락처 항목 정의
+    const sides = [
+      {
+        label: "신랑측",
+        contacts: [
+          { name: groom.name, role: "신랑", phone: groom.phone },
+          { name: groom.father, role: "신랑 아버지", phone: groom.fatherPhone },
+          { name: groom.mother, role: "신랑 어머니", phone: groom.motherPhone },
+        ].filter((c) => c.name && c.phone),
+      },
+      {
+        label: "신부측",
+        contacts: [
+          { name: bride.name, role: "신부", phone: bride.phone },
+          { name: bride.father, role: "신부 아버지", phone: bride.fatherPhone },
+          { name: bride.mother, role: "신부 어머니", phone: bride.motherPhone },
+        ].filter((c) => c.name && c.phone),
+      },
+    ];
+
+    const phoneIcon = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 10a19.79 19.79 0 01-3.07-8.67A2 2 0 012 .18h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.91 7.91A16 16 0 0016.09 17.09l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7a2 2 0 011.72 2.02z"></path></svg>`;
+    const smsIcon = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"></path></svg>`;
+
+    list.innerHTML = sides.map((side) => {
+      // 연락처가 하나도 없으면 "—" 표시
+      const rows = side.contacts.length > 0
+        ? side.contacts.map((c) => `
+            <div class="contact-row">
+              <div>
+                <div class="contact-person-name">${c.name}</div>
+                <div class="contact-person-role">${c.role}</div>
+              </div>
+              <div class="contact-actions">
+                <a href="sms:${c.phone}" class="btn-action btn-sms" aria-label="${c.name}에게 문자">
+                  ${smsIcon} 문자
+                </a>
+                <a href="tel:${c.phone}" class="btn-action btn-call" aria-label="${c.name}에게 전화">
+                  ${phoneIcon} 전화
+                </a>
+              </div>
+            </div>
+          `).join("")
+        : `<p style="color:var(--color-text-light);font-size:14px;padding:8px 0;">연락처를 입력해 주세요</p>`;
+
+      return `
+        <div class="contact-section">
+          <div class="contact-section-label">${side.label}</div>
+          ${rows}
+        </div>
+      `;
+    }).join("");
+  }
+
+  function initContactModal() {
+    const modal = $("#modal-contact");
+    if (!modal) return;
+
+    function openModal() {
+      // 1) display:flex 로 전환 (렌더링 시작, 아직 translateX(100%) 상태)
+      modal.style.display = "flex";
+      // 2) 브라우저가 레이아웃을 계산한 뒤 .open 추가 → transition 발동
+      void modal.offsetHeight;
+      modal.classList.add("open");
+      document.body.style.overflow = "hidden";
+    }
+
+    function closeModal() {
+      // .open 제거 → translateX(100%) 로 슬라이드 아웃
+      modal.classList.remove("open");
+      // 트랜지션 끝나면 완전히 숨김
+      modal.addEventListener("transitionend", () => {
+        modal.style.display = "none";
+        document.body.style.overflow = "";
+      }, { once: true });
+    }
+
+    $("#btn-contact-open")?.addEventListener("click", openModal);
+    $("#modal-close")?.addEventListener("click", closeModal);
+
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && modal.classList.contains("open")) closeModal();
+    });
   }
 
   /* ─── 2. 초대 문구 섹션 ─── */
@@ -450,5 +586,7 @@
     renderLocation();
     renderAccounts();
     renderFooter();
+    renderContactModal();
+    initContactModal();
   });
 })();

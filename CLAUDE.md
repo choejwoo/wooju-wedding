@@ -47,7 +47,7 @@
 - 예식장 이름 & 주소
 - **Google Maps iframe 임베드** (API 키 불필요, `<iframe src="https://maps.google.com/maps?q=...">` 방식)
 - 지도 앱 바로가기 버튼 3종:
-  - "카카오맵으로 보기" → `kakaomap://` 딪링크 (웹: `https://map.kakao.com/link/map/장소명,lat,lng`)
+  - "카카오내비로 보기" → `kakaomap://` 딪링크 (웹: `https://map.kakao.com/link/map/장소명,lat,lng`)
   - "네이버 지도로 보기" → `nmap://` 딪링크 (웹: `https://map.naver.com/...`)
   - "티맵으로 보기" → `tmap://` 딪링크
 - 주차 안내, 지하철 안내 등 교통 정보

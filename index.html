@@ -52,11 +52,24 @@
 
     <div id="greeting-text" class="fade-up" style="--delay:0.1s"></div>
 
+    <div class="greeting-gif fade-up" style="--delay:0.15s" aria-hidden="true">
+      <img src="images/cover/bridge.gif" alt="" />
+    </div>
+
     <div id="parents-info" class="parents-info fade-up" style="--delay:0.2s" aria-label="양가 부모님"></div>
 
     <div class="greeting-event-info fade-up" style="--delay:0.3s" aria-label="예식 정보">
       <strong id="greeting-date"></strong><br>
       <span id="greeting-location"></span>
+    </div>
+
+    <div class="greeting-contact fade-up" style="--delay:0.4s">
+      <button class="btn-contact-open" id="btn-contact-open" aria-label="연락하기">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 10a19.79 19.79 0 01-3.07-8.67A2 2 0 012 .18h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.91 7.91A16 16 0 0016.09 17.09l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7a2 2 0 011.72 2.02z"></path>
+        </svg>
+        연락하기
+      </button>
     </div>
   </section>
 
@@ -101,14 +114,22 @@
     </div>
 
     <div class="map-buttons fade-up" style="--delay:0.2s">
-      <a id="btn-kakaomap" href="#" target="_blank" rel="noopener" class="btn-map" aria-label="카카오맵으로 보기">
-        🗺 카카오맵
+      <!-- 카카오내비 -->
+      <a id="btn-kakaomap" href="#" target="_blank" rel="noopener" class="btn-map btn-map-kakao" aria-label="카카오내비로 보기">
+        <img class="map-brand-icon" src="images/maps/kakaomap.png" alt="" aria-hidden="true" />
+        카카오내비
       </a>
-      <a id="btn-navermap" href="#" target="_blank" rel="noopener" class="btn-map" aria-label="네이버지도로 보기">
-        🗺 네이버지도
+
+      <!-- 네이버지도 -->
+      <a id="btn-navermap" href="#" target="_blank" rel="noopener" class="btn-map btn-map-naver" aria-label="네이버지도로 보기">
+        <img class="map-brand-icon" src="images/maps/navermap.webp" alt="" aria-hidden="true" />
+        네이버지도
       </a>
-      <a id="btn-tmap" href="#" target="_blank" rel="noopener" class="btn-map" aria-label="티맵으로 보기">
-        🗺 티맵
+
+      <!-- 티맵 -->
+      <a id="btn-tmap" href="#" target="_blank" rel="noopener" class="btn-map btn-map-tmap" aria-label="티맵으로 보기">
+        <img class="map-brand-icon" src="images/maps/tmap.jpeg" alt="" aria-hidden="true" />
+        티맵
       </a>
     </div>
 
@@ -121,7 +142,8 @@
 
   <!-- ─── 5. 계좌 ─── -->
   <section id="section-account" aria-label="마음 전하실 곳">
-    <p class="section-title fade-in">마음 전하실 곳</p>
+    <p class="section-title fade-in">Account</p>
+    <h2 class="section-subtitle fade-up">마음 전하실 곳</h2>
 
     <div class="account-tabs" role="tablist" aria-label="신랑/신부 계좌">
       <button class="account-tab active" role="tab" aria-selected="true"
@@ -140,6 +162,10 @@
 
   <!-- ─── 6. 푸터 ─── -->
   <footer aria-label="공유">
+    <div class="footer-photo">
+      <img src="images/cover/last_cover.jpeg" alt="최재우 이주연" />
+    </div>
+
     <p class="footer-names" id="footer-names"></p>
 
     <div class="share-buttons">
@@ -159,6 +185,22 @@
   </footer>
 
 </div><!-- /.page-wrapper -->
+
+<!-- ─── 연락하기 전체화면 ─── -->
+<div id="modal-contact" class="modal-contact" role="dialog" aria-modal="true" aria-label="연락하기">
+  <div class="modal-header">
+    <button class="modal-back" id="modal-close" aria-label="뒤로가기">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <polyline points="15 18 9 12 15 6"></polyline>
+      </svg>
+    </button>
+    <h3 class="modal-title">연락하기</h3>
+    <div class="modal-header-spacer" aria-hidden="true"></div>
+  </div>
+  <div class="modal-body">
+    <div class="contact-list" id="contact-list"></div>
+  </div>
+</div>
 
 <!-- 스크립트 -->
 <script src="js/data.js"></script>
