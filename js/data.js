@@ -92,6 +92,6 @@ const weddingData = {
     kakaoKey: "73535e288dd4f87655f8b52f5670810c",
     title: "최재우 ♥ 이주연 결혼합니다",
     description: "2026년 6월 6일 토요일 오후 6시 30분\n역삼 아모리스",
-    imageUrl: "https://picsum.photos/seed/wedding-share/600/400",
+    imageUrl: "https://wooju-wedding.com/images/og-image.jpg",
   },
 };
