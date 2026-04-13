@@ -16,7 +16,7 @@ const weddingData = {
     mother: "진선숙",
     phone: "010-9524-3340",           // 신부 연락처
     fatherPhone: "010-5455-3131",     // 신부 아버지 연락처
-    motherPhone: "010-4432-3131",     // 신부 어머니 연락처
+    motherPhone: "010-4432-3340",     // 신부 어머니 연락처
   },
   date: "2026-06-06T18:30:00",
   greeting: `저희 두 사람이 사랑과 믿음으로
