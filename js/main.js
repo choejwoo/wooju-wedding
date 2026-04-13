@@ -5,16 +5,6 @@
 
   // weddingData는 data.js에서 직접 로드됨
 
-  /* ─── iOS Safari 핀치 줌 차단 ─── */
-  document.addEventListener("gesturestart", (e) => e.preventDefault());
-  document.addEventListener("gesturechange", (e) => e.preventDefault());
-  document.addEventListener("gestureend", (e) => e.preventDefault());
-
-  // 두 손가락 터치 차단 (gesture 이벤트가 먹히지 않는 경우 대비)
-  document.addEventListener("touchstart", (e) => {
-    if (e.touches.length > 1) e.preventDefault();
-  }, { passive: false });
-
   /* ─── 유틸 ─── */
   function $(sel, ctx) {
     return (ctx || document).querySelector(sel);
