@@ -1668,3 +1668,45 @@ footer {
   opacity: 0.5;
   cursor: not-allowed;
 }
+
+/* 지도 섹션 하단 RSVP CTA */
+.rsvp-location-cta {
+  margin-top: 48px;
+  text-align: center;
+}
+
+.rsvp-cta-title {
+  font-family: var(--font-serif);
+  font-size: 20px;
+  font-weight: 400;
+  color: var(--color-text);
+  margin-bottom: 20px;
+  letter-spacing: 0.04em;
+}
+
+.rsvp-cta-desc {
+  font-size: 14px;
+  line-height: 1.9;
+  color: var(--color-text-secondary);
+  margin-bottom: 32px;
+}
+
+.btn-rsvp-location {
+  display: block;
+  width: 100%;
+  padding: 16px;
+  background: #b0b0b0;
+  color: #fff;
+  border-radius: var(--radius-sm);
+  font-size: 15px;
+  font-family: var(--font-serif);
+  letter-spacing: 0.04em;
+  transition: background var(--transition);
+  cursor: pointer;
+  min-height: 52px;
+}
+
+.btn-rsvp-location:hover,
+.btn-rsvp-location:active {
+  background: var(--color-primary);
+}

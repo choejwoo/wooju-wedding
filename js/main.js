@@ -677,7 +677,7 @@
     if (!modal) return;
 
     $("#rsvp-close")?.addEventListener("click", closeRSVPModal);
-    $("#btn-rsvp-trigger")?.addEventListener("click", openRSVPModal);
+    $$(".btn-rsvp-trigger").forEach((btn) => btn.addEventListener("click", openRSVPModal));
 
     document.addEventListener("keydown", (e) => {
       if (e.key === "Escape" && modal.classList.contains("open")) closeRSVPModal();
@@ -718,7 +718,7 @@
       const attend = get("attend");
       const meal = get("meal");
       const name = $("#rsvp-name")?.value.trim();
-      const companion = $("#rsvp-companion")?.value.trim();
+      const companion = get("companion");
       const message = $("#rsvp-message")?.value.trim();
       const privacyChecked = $("#rsvp-privacy-check")?.checked;
 
@@ -731,11 +731,12 @@
       const submitBtn = $("#btn-rsvp-submit");
       if (submitBtn) submitBtn.disabled = true;
 
-      const sideLabel   = side === "groom" ? "신랑측" : "신부측";
-      const attendLabel = attend === "yes" ? "참석" : "불참석";
-      const mealLabel   = meal === "yes" ? "○" : meal === "no" ? "×" : "미정";
+      const sideLabel      = side === "groom" ? "신랑측" : "신부측";
+      const attendLabel    = attend === "yes" ? "참석" : "불참석";
+      const mealLabel      = meal === "yes" ? "○" : meal === "no" ? "×" : "미정";
+      const companionLabel = companion === "yes" ? "○" : companion === "no" ? "×" : "";
 
-      const payload = { side: sideLabel, attend: attendLabel, meal: mealLabel, name, companion, message };
+      const payload = { side: sideLabel, attend: attendLabel, meal: mealLabel, name, companion: companionLabel, message };
       const scriptUrl = weddingData.rsvp?.scriptUrl;
 
       try {
