@@ -70,6 +70,13 @@
         </svg>
         연락하기
       </button>
+      <button class="btn-contact-open btn-rsvp-trigger" id="btn-rsvp-trigger" aria-label="참석 여부 전달">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+          <polyline points="22,6 12,13 2,6"></polyline>
+        </svg>
+        참석 여부 전달
+      </button>
     </div>
   </section>
 
@@ -200,6 +207,107 @@
   </svg>
 </button>
 <audio id="bgm-audio" src="bgm/wedding.mp3" loop preload="auto"></audio>
+
+<!-- ─── 참석 여부 전달 웰컴 모달 ─── -->
+<div id="modal-welcome" class="modal-welcome-overlay" role="dialog" aria-modal="true" aria-label="참석 여부 전달" aria-hidden="true">
+  <div class="modal-welcome-card">
+    <button class="modal-welcome-close" id="btn-welcome-close" aria-label="닫기">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <line x1="18" y1="6" x2="6" y2="18"></line>
+        <line x1="6" y1="6" x2="18" y2="18"></line>
+      </svg>
+    </button>
+    <h3 class="modal-welcome-title">참석 여부 전달</h3>
+    <p class="modal-welcome-desc">결혼식에 참석해주시는 모든 분들을<br>더욱 특별하게 모시고자 하오니,<br>참석 여부 전달을 부탁드립니다.</p>
+    <div class="modal-welcome-divider"></div>
+    <div class="modal-welcome-info">
+      <div class="modal-welcome-info-row">
+        <span class="info-icon" aria-hidden="true">♡</span>
+        <span><span id="modal-groom-name"></span> 신랑 · <span id="modal-bride-name"></span> 신부</span>
+      </div>
+      <div class="modal-welcome-info-row">
+        <span class="info-icon" aria-hidden="true">□</span>
+        <span id="modal-date"></span>
+      </div>
+      <div class="modal-welcome-info-row">
+        <span class="info-icon" aria-hidden="true">▷</span>
+        <span id="modal-location"></span>
+      </div>
+    </div>
+    <button id="btn-open-rsvp" class="btn-rsvp-open">참석 여부 전달</button>
+    <label class="modal-welcome-skip" for="chk-skip-today">
+      <input type="checkbox" id="chk-skip-today">
+      오늘하루 보지않기
+    </label>
+  </div>
+</div>
+
+<!-- ─── 참석 여부 전달 슬라이더 ─── -->
+<div id="modal-rsvp" class="modal-contact" role="dialog" aria-modal="true" aria-label="참석 여부 전달">
+  <div class="modal-header">
+    <button class="modal-back" id="rsvp-close" aria-label="닫기">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <polyline points="15 18 9 12 15 6"></polyline>
+      </svg>
+    </button>
+    <h3 class="modal-title">참석 여부 전달</h3>
+    <div class="modal-header-spacer" aria-hidden="true"></div>
+  </div>
+  <div class="modal-body">
+    <form id="rsvp-form" novalidate>
+
+      <div class="rsvp-field">
+        <p class="rsvp-label">어느 측 하객이신가요? <span class="rsvp-required" aria-hidden="true">*</span></p>
+        <div class="toggle-group" role="group" aria-label="측 선택">
+          <button type="button" class="toggle-btn" data-group="side" data-value="groom" aria-pressed="false">신랑</button>
+          <button type="button" class="toggle-btn" data-group="side" data-value="bride" aria-pressed="false">신부</button>
+        </div>
+      </div>
+
+      <div class="rsvp-field">
+        <p class="rsvp-label">참석여부 <span class="rsvp-required" aria-hidden="true">*</span></p>
+        <div class="toggle-group" role="group" aria-label="참석여부 선택">
+          <button type="button" class="toggle-btn" data-group="attend" data-value="yes" aria-pressed="false">참석</button>
+          <button type="button" class="toggle-btn" data-group="attend" data-value="no" aria-pressed="false">불참석</button>
+        </div>
+      </div>
+
+      <div class="rsvp-field">
+        <p class="rsvp-label">식사여부 <span class="rsvp-required" aria-hidden="true">*</span></p>
+        <div class="toggle-group" role="group" aria-label="식사여부 선택">
+          <button type="button" class="toggle-btn" data-group="meal" data-value="yes" aria-pressed="false">○</button>
+          <button type="button" class="toggle-btn" data-group="meal" data-value="no" aria-pressed="false">×</button>
+          <button type="button" class="toggle-btn" data-group="meal" data-value="undecided" aria-pressed="false">미정</button>
+        </div>
+      </div>
+
+      <div class="rsvp-field">
+        <label class="rsvp-label" for="rsvp-name">성함 <span class="rsvp-required" aria-hidden="true">*</span></label>
+        <input type="text" id="rsvp-name" class="rsvp-input" autocomplete="name" />
+      </div>
+
+      <div class="rsvp-field">
+        <label class="rsvp-label" for="rsvp-companion">동행인 성함</label>
+        <input type="text" id="rsvp-companion" class="rsvp-input" autocomplete="off" />
+      </div>
+
+      <div class="rsvp-field">
+        <label class="rsvp-label" for="rsvp-message">전달사항</label>
+        <textarea id="rsvp-message" class="rsvp-textarea" rows="5"></textarea>
+      </div>
+
+      <div class="rsvp-privacy">
+        <label>
+          <input type="checkbox" id="rsvp-privacy-check">
+          개인정보 수집 및 활용 동의
+        </label>
+        <button type="button" id="btn-privacy-detail" class="btn-privacy-detail">[자세히보기]</button>
+      </div>
+
+      <button type="submit" class="btn-rsvp-submit" id="btn-rsvp-submit">전달</button>
+    </form>
+  </div>
+</div>
 
 <!-- ─── 연락하기 전체화면 ─── -->
 <div id="modal-contact" class="modal-contact" role="dialog" aria-modal="true" aria-label="연락하기">

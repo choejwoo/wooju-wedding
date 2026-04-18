@@ -611,6 +611,157 @@
     });
   }
 
+  /* ─── 참석 여부 전달 ─── */
+
+  function renderWelcomeModal() {
+    setText("#modal-groom-name", weddingData.groom.name);
+    setText("#modal-bride-name", weddingData.bride.name);
+    setText("#modal-date", formatDate(weddingData.date));
+    setText("#modal-location", weddingData.location.name);
+  }
+
+  function openRSVPModal() {
+    const modal = $("#modal-rsvp");
+    if (!modal) return;
+    modal.style.display = "flex";
+    void modal.offsetHeight;
+    modal.classList.add("open");
+    document.body.style.overflow = "hidden";
+  }
+
+  function closeRSVPModal() {
+    const modal = $("#modal-rsvp");
+    if (!modal) return;
+    modal.classList.remove("open");
+    modal.addEventListener("transitionend", () => {
+      modal.style.display = "none";
+      document.body.style.overflow = "";
+    }, { once: true });
+  }
+
+  function initWelcomeModal() {
+    const overlay = $("#modal-welcome");
+    if (!overlay) return;
+
+    const skipKey = "rsvp_skip_date";
+    const today = new Date().toDateString();
+    if (localStorage.getItem(skipKey) === today) return;
+
+    setTimeout(() => {
+      overlay.setAttribute("aria-hidden", "false");
+      overlay.classList.add("show");
+    }, 800);
+
+    function closeWelcome() {
+      if ($("#chk-skip-today")?.checked) {
+        localStorage.setItem(skipKey, today);
+      }
+      overlay.classList.remove("show");
+      overlay.setAttribute("aria-hidden", "true");
+    }
+
+    $("#btn-welcome-close")?.addEventListener("click", closeWelcome);
+
+    overlay.addEventListener("click", (e) => {
+      if (e.target === overlay) closeWelcome();
+    });
+
+    $("#btn-open-rsvp")?.addEventListener("click", () => {
+      closeWelcome();
+      setTimeout(openRSVPModal, 200);
+    });
+  }
+
+  function initRSVPModal() {
+    const modal = $("#modal-rsvp");
+    if (!modal) return;
+
+    $("#rsvp-close")?.addEventListener("click", closeRSVPModal);
+    $("#btn-rsvp-trigger")?.addEventListener("click", openRSVPModal);
+
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && modal.classList.contains("open")) closeRSVPModal();
+    });
+
+    // 토글 버튼 선택
+    modal.addEventListener("click", (e) => {
+      const btn = e.target.closest(".toggle-btn");
+      if (!btn) return;
+      const group = btn.dataset.group;
+      modal.querySelectorAll(`.toggle-btn[data-group="${group}"]`).forEach((b) => {
+        b.classList.remove("selected");
+        b.setAttribute("aria-pressed", "false");
+      });
+      btn.classList.add("selected");
+      btn.setAttribute("aria-pressed", "true");
+    });
+
+    // 개인정보 자세히보기
+    $("#btn-privacy-detail")?.addEventListener("click", () => {
+      alert(
+        "개인정보 수집 및 이용 안내\n\n" +
+        "• 수집 항목: 성함, 동행인 성함, 전달사항\n" +
+        "• 수집 목적: 결혼식 참석 인원 파악\n" +
+        "• 보유 기간: 행사 종료 후 즉시 삭제"
+      );
+    });
+
+    // 폼 제출
+    const form = $("#rsvp-form");
+    form?.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const get = (group) =>
+        modal.querySelector(`.toggle-btn[data-group="${group}"].selected`)?.dataset.value;
+
+      const side = get("side");
+      const attend = get("attend");
+      const meal = get("meal");
+      const name = $("#rsvp-name")?.value.trim();
+      const companion = $("#rsvp-companion")?.value.trim();
+      const message = $("#rsvp-message")?.value.trim();
+      const privacyChecked = $("#rsvp-privacy-check")?.checked;
+
+      if (!side)          return showToast("어느 측 하객이신지 선택해 주세요");
+      if (!attend)        return showToast("참석 여부를 선택해 주세요");
+      if (!meal)          return showToast("식사 여부를 선택해 주세요");
+      if (!name)          return showToast("성함을 입력해 주세요");
+      if (!privacyChecked) return showToast("개인정보 동의가 필요합니다");
+
+      const submitBtn = $("#btn-rsvp-submit");
+      if (submitBtn) submitBtn.disabled = true;
+
+      const sideLabel   = side === "groom" ? "신랑측" : "신부측";
+      const attendLabel = attend === "yes" ? "참석" : "불참석";
+      const mealLabel   = meal === "yes" ? "○" : meal === "no" ? "×" : "미정";
+
+      const payload = { side: sideLabel, attend: attendLabel, meal: mealLabel, name, companion, message };
+      const scriptUrl = weddingData.rsvp?.scriptUrl;
+
+      try {
+        if (scriptUrl) {
+          await fetch(scriptUrl, {
+            method: "POST",
+            mode: "no-cors",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
+          });
+        }
+        showToast("참석 여부가 전달되었습니다 💌");
+        closeRSVPModal();
+        form.reset();
+        modal.querySelectorAll(".toggle-btn.selected").forEach((b) => {
+          b.classList.remove("selected");
+          b.setAttribute("aria-pressed", "false");
+        });
+      } catch {
+        showToast("전송 중 오류가 발생했습니다. 다시 시도해 주세요.");
+      } finally {
+        if (submitBtn) submitBtn.disabled = false;
+      }
+    });
+  }
+
   /* ─── 초기화 ─── */
   document.addEventListener("DOMContentLoaded", () => {
     renderCover();
@@ -622,5 +773,8 @@
     renderContactModal();
     initContactModal();
     initBGM();
+    renderWelcomeModal();
+    initWelcomeModal();
+    initRSVPModal();
   });
 })();

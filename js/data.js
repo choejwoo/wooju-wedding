@@ -94,4 +94,8 @@ const weddingData = {
     description: "2026년 6월 6일 토요일 오후 6시 30분\n역삼 아모리스",
     imageUrl: "https://wooju-wedding.com/images/og-image.jpg",
   },
+  // Google Apps Script 배포 URL (설정 방법: README 참고)
+  rsvp: {
+    scriptUrl: "https://script.google.com/macros/s/AKfycbzxnou-jw7QVKIkRwksSIYthimAestI1QP75_3ekpMi8l8AWAma8tDvObGejUgyT1a8/exec",
+  },
 };

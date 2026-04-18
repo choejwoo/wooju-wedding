@@ -270,7 +270,7 @@ section {
   opacity: 0.9;
 }
 
-/* 연락하기 버튼 래퍼 (2번 섹션 하단) */
+/* 연락하기 버튼 래퍼 (2번 섹션 하단) — flex는 하단 별도 선언 */
 .greeting-contact {
   margin-top: 32px;
   text-align: center;
@@ -1380,4 +1380,291 @@ footer {
 
 .bgm-toggle:active {
   transform: scale(0.92);
+}
+
+/* ═══════════════════════════════════════════════
+   연락하기 버튼 row — 두 버튼 나란히
+   ═══════════════════════════════════════════════ */
+.greeting-contact {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 32px;
+}
+
+/* ═══════════════════════════════════════════════
+   참석 여부 전달 — 웰컴 오버레이 모달
+   ═══════════════════════════════════════════════ */
+.modal-welcome-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 500;
+  background: rgba(0, 0, 0, 0.52);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.modal-welcome-overlay.show {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.modal-welcome-card {
+  background: var(--color-surface);
+  border-radius: var(--radius);
+  padding: 36px 24px 24px;
+  width: 100%;
+  max-width: 340px;
+  position: relative;
+  box-shadow: var(--shadow-lg);
+}
+
+.modal-welcome-close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-light);
+  border-radius: 50%;
+  transition: color var(--transition), background var(--transition);
+}
+
+.modal-welcome-close:hover {
+  color: var(--color-text);
+  background: var(--color-bg);
+}
+
+.modal-welcome-title {
+  font-family: var(--font-serif);
+  font-size: 18px;
+  font-weight: 400;
+  text-align: center;
+  color: var(--color-text);
+  margin-bottom: 16px;
+}
+
+.modal-welcome-desc {
+  font-size: 14px;
+  line-height: 1.85;
+  text-align: center;
+  color: var(--color-text-secondary);
+}
+
+.modal-welcome-divider {
+  height: 1px;
+  background: var(--color-border);
+  margin: 20px 0;
+}
+
+.modal-welcome-info {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  margin-bottom: 22px;
+}
+
+.modal-welcome-info-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  line-height: 1.5;
+}
+
+.info-icon {
+  width: 16px;
+  text-align: center;
+  flex-shrink: 0;
+  color: var(--color-primary);
+  margin-top: 1px;
+}
+
+.btn-rsvp-open {
+  width: 100%;
+  padding: 14px;
+  background: #b0b0b0;
+  color: #fff;
+  border-radius: var(--radius-sm);
+  font-size: 15px;
+  font-family: var(--font-serif);
+  letter-spacing: 0.04em;
+  margin-bottom: 14px;
+  transition: background var(--transition);
+}
+
+.btn-rsvp-open:hover,
+.btn-rsvp-open:active {
+  background: var(--color-primary);
+}
+
+.modal-welcome-skip {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--color-text-light);
+  cursor: pointer;
+  user-select: none;
+}
+
+.modal-welcome-skip input[type="checkbox"] {
+  width: 14px;
+  height: 14px;
+  accent-color: var(--color-primary);
+  cursor: pointer;
+}
+
+/* ═══════════════════════════════════════════════
+   참석 여부 전달 — RSVP 폼 슬라이더
+   ═══════════════════════════════════════════════ */
+.rsvp-field {
+  padding: 20px 0 0;
+  border-bottom: none;
+}
+
+.rsvp-field + .rsvp-field {
+  padding-top: 20px;
+}
+
+.rsvp-label {
+  display: block;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-text);
+  margin-bottom: 10px;
+  line-height: 1.4;
+}
+
+.rsvp-required {
+  color: #e53935;
+  margin-left: 2px;
+}
+
+.toggle-group {
+  display: flex;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+
+.toggle-btn {
+  flex: 1;
+  padding: 13px 8px;
+  font-size: 14px;
+  font-family: var(--font-sans);
+  color: var(--color-text-secondary);
+  background: transparent;
+  border: none;
+  border-right: 1px solid var(--color-border);
+  transition: background var(--transition), color var(--transition);
+  min-height: 48px;
+  cursor: pointer;
+}
+
+.toggle-btn:last-child {
+  border-right: none;
+}
+
+.toggle-btn.selected {
+  background: var(--color-primary);
+  color: #fff;
+}
+
+.toggle-btn:not(.selected):hover {
+  background: var(--color-bg);
+}
+
+.rsvp-input,
+.rsvp-textarea {
+  width: 100%;
+  padding: 13px 14px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  font-size: 15px;
+  font-family: var(--font-sans);
+  color: var(--color-text);
+  background: var(--color-surface);
+  outline: none;
+  transition: border-color var(--transition);
+  -webkit-appearance: none;
+}
+
+.rsvp-input:focus,
+.rsvp-textarea:focus {
+  border-color: var(--color-primary);
+}
+
+.rsvp-textarea {
+  resize: vertical;
+  min-height: 120px;
+  line-height: 1.6;
+}
+
+.rsvp-privacy {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 24px 0 4px;
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  flex-wrap: wrap;
+}
+
+.rsvp-privacy label {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  cursor: pointer;
+}
+
+.rsvp-privacy input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--color-primary);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.btn-privacy-detail {
+  color: var(--color-text-light);
+  font-size: 13px;
+  font-family: var(--font-sans);
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.btn-rsvp-submit {
+  width: 100%;
+  padding: 16px;
+  background: #b0b0b0;
+  color: #fff;
+  border-radius: var(--radius-sm);
+  font-size: 16px;
+  font-family: var(--font-serif);
+  letter-spacing: 0.04em;
+  margin-top: 20px;
+  margin-bottom: 8px;
+  transition: background var(--transition), opacity var(--transition);
+  cursor: pointer;
+}
+
+.btn-rsvp-submit:not(:disabled):hover {
+  background: var(--color-primary);
+}
+
+.btn-rsvp-submit:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
