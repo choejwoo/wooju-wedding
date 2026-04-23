@@ -729,7 +729,10 @@
       if (!privacyChecked) return showToast("개인정보 동의가 필요합니다");
 
       const submitBtn = $("#btn-rsvp-submit");
-      if (submitBtn) submitBtn.disabled = true;
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<span class="spinner"></span>전달 중...';
+      }
 
       const sideLabel      = side === "groom" ? "신랑측" : "신부측";
       const attendLabel    = attend === "yes" ? "참석" : "불참석";
@@ -758,7 +761,10 @@
       } catch {
         showToast("전송 중 오류가 발생했습니다. 다시 시도해 주세요.");
       } finally {
-        if (submitBtn) submitBtn.disabled = false;
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.textContent = '전달';
+        }
       }
     });
   }
