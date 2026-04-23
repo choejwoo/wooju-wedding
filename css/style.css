@@ -1493,7 +1493,7 @@ footer {
 .btn-rsvp-open {
   width: 100%;
   padding: 14px;
-  background: #b0b0b0;
+  background: var(--color-primary);
   color: #fff;
   border-radius: var(--radius-sm);
   font-size: 15px;
@@ -1505,7 +1505,7 @@ footer {
 
 .btn-rsvp-open:hover,
 .btn-rsvp-open:active {
-  background: var(--color-primary);
+  background: var(--color-primary-dark);
 }
 
 .modal-welcome-skip {
@@ -1649,7 +1649,7 @@ footer {
 .btn-rsvp-submit {
   width: 100%;
   padding: 16px;
-  background: #b0b0b0;
+  background: var(--color-primary);
   color: #fff;
   border-radius: var(--radius-sm);
   font-size: 16px;
@@ -1662,7 +1662,7 @@ footer {
 }
 
 .btn-rsvp-submit:not(:disabled):hover {
-  background: var(--color-primary);
+  background: var(--color-primary-dark);
 }
 
 .btn-rsvp-submit:disabled {
@@ -1712,7 +1712,7 @@ footer {
   display: block;
   width: 100%;
   padding: 16px;
-  background: #b0b0b0;
+  background: var(--color-primary);
   color: #fff;
   border-radius: var(--radius-sm);
   font-size: 15px;
@@ -1725,5 +1725,5 @@ footer {
 
 .btn-rsvp-location:hover,
 .btn-rsvp-location:active {
-  background: var(--color-primary);
+  background: var(--color-primary-dark);
 }
